@@ -1,5 +1,5 @@
 import argparse
-from tasks import add_task, list_tasks, complete_task, delete_task
+from tasks import add_task, list_tasks, complete_task, delete_task, search_tasks
 
 
 def main():
@@ -22,6 +22,10 @@ def main():
     del_parser = subparsers.add_parser("delete", help="Delete a task")
     del_parser.add_argument("id", type=int, help="Task ID")
 
+    # search
+    search_parser = subparsers.add_parser("search", help="Search tasks by keyword")
+    search_parser.add_argument("query", help="Keyword to search")
+
     args = parser.parse_args()
 
     if args.command == "add":
@@ -32,6 +36,8 @@ def main():
         complete_task(args.id)
     elif args.command == "delete":
         delete_task(args.id)
+    elif args.command == "search":
+        search_tasks(args.query)
     else:
         parser.print_help()
 

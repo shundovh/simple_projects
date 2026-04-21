@@ -62,3 +62,14 @@ def delete_task(task_id):
         return
     save_tasks(tasks)
     print(f"Deleted task {task_id}.")
+
+
+def search_tasks(query):
+    tasks = load_tasks()
+    results = [t for t in tasks if query.lower() in t["title"].lower()]
+    if not results:
+        print(f"No tasks matching '{query}'.")
+        return
+    for task in results:
+        status = "x" if task["done"] else " "
+        print(f"[{status}] {task['id']}. {task['title']}")

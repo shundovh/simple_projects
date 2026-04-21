@@ -1,6 +1,6 @@
 import os
 import pytest
-from tasks import add_task, list_tasks, complete_task, delete_task, load_tasks, DATA_FILE
+from tasks import add_task, list_tasks, complete_task, delete_task, search_tasks, load_tasks, DATA_FILE
 
 
 @pytest.fixture(autouse=True)
@@ -65,6 +65,41 @@ def test_list_all_includes_completed(capsys):
     list_tasks(show_all=True)
     captured = capsys.readouterr()
     assert "Done task" in captured.out
+
+
+def test_search_finds_matching_task(capsys):
+    add_task("Buy groceries")
+    add_task("Fix login bug")
+    capsys.readouterr()
+    search_tasks("groceries")
+    captured = capsys.readouterr()
+    assert "Buy groceries" in captured.out
+    assert "Fix login bug" not in captured.out
+
+
+def test_search_case_insensitive(capsys):
+    add_task("Buy Groceries")
+    capsys.readouterr()
+    search_tasks("groceries")
+    captured = capsys.readouterr()
+    assert "Buy Groceries" in captured.out
+
+
+def test_search_no_results(capsys):
+    add_task("Buy groceries")
+    capsys.readouterr()
+    search_tasks("xyz")
+    captured = capsys.readouterr()
+    assert "No tasks matching" in captured.out
+
+
+def test_search_includes_completed(capsys):
+    add_task("Buy groceries")
+    complete_task(1)
+    capsys.readouterr()
+    search_tasks("groceries")
+    captured = capsys.readouterr()
+    assert "[x]" in captured.out
 
 
 def test_list_hides_completed_by_default(capsys):
